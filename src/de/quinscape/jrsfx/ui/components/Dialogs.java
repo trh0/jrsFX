@@ -1,4 +1,4 @@
-package de.quinscape.jrsfx.ui;
+package de.quinscape.jrsfx.ui.components;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.quinscape.jrsfx.ui.Images;
 import de.quinscape.jrsfx.util.ApplicationIO;
 import de.quinscape.jrsfx.util.Messages;
 import javafx.beans.value.ChangeListener;

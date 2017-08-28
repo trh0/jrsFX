@@ -1,8 +1,9 @@
-package de.quinscape.jrsfx.ui;
+package de.quinscape.jrsfx.ui.components;
 
 import java.io.File;
 
 import de.quinscape.jrsfx.controller.StaticBase;
+import de.quinscape.jrsfx.ui.Images;
 import de.quinscape.jrsfx.util.ApplicationIO;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -14,7 +15,7 @@ import javafx.scene.image.ImageView;
  * @author trh0 - TKoll
  *
  */
-public class FileTreeItem
+public class JRSTreeItem
 		extends TreeItem<String> {
 
 	// this stores the full path to the file or directory
@@ -38,14 +39,14 @@ public class FileTreeItem
 		return this.isDirectory;
 	}
 
-	public FileTreeItem(File aFile, boolean pragmaOnce) {
+	public JRSTreeItem(File aFile, boolean pragmaOnce) {
 		super(aFile.toPath().toString());
 		this.file = aFile;
 		init(file, pragmaOnce);
 		addHandlers();
 	}
 
-	public FileTreeItem(File file) {
+	public JRSTreeItem(File file) {
 		super(file.toPath().toString());
 		this.file = file;
 		init(file, true);
@@ -90,7 +91,7 @@ public class FileTreeItem
 		}
 		if (this.isDirectory && file.canRead() && !once) {
 			for (File f : file.listFiles()) {
-				this.getChildren().add(new FileTreeItem(f));
+				this.getChildren().add(new JRSTreeItem(f));
 			}
 		}
 
@@ -105,7 +106,7 @@ public class FileTreeItem
 	private void addHandlers() {
 		this.addEventHandler(TreeItem.branchExpandedEvent(), e -> {
 			StaticBase.instance().getUiThread().runTask(() -> {
-				FileTreeItem source = FileTreeItem.class.cast(e.getTreeItem());
+				JRSTreeItem source = JRSTreeItem.class.cast(e.getTreeItem());
 				if (source.isDirectory() && source.isExpanded()) {
 					ImageView iv = (ImageView) source.getGraphic();
 					iv.setImage(Images.FOLDER_EXPANDED.getImage(size, size));
@@ -117,14 +118,14 @@ public class FileTreeItem
 						source.wasExpanded = true;
 						try {
 							children.forEach(child -> {
-								FileTreeItem it = (FileTreeItem) child;
+								JRSTreeItem it = (JRSTreeItem) child;
 								File f = it.getFile();
 								if (f.isDirectory() && f.canRead()) {
 									File[] fls = f.listFiles();
 									if (fls != null) {
 										for (File fl : fls) {
 
-											FileTreeItem treeNode = new FileTreeItem(fl);
+											JRSTreeItem treeNode = new JRSTreeItem(fl);
 
 											ObservableList<TreeItem<String>> childsChilds = child.getChildren();
 											synchronized (childsChilds) {
@@ -146,7 +147,7 @@ public class FileTreeItem
 
 		this.addEventHandler(TreeItem.branchCollapsedEvent(), e -> {
 			StaticBase.instance().getUiThread().runTask(() -> {
-				FileTreeItem source = FileTreeItem.class.cast(e.getTreeItem());
+				JRSTreeItem source = JRSTreeItem.class.cast(e.getTreeItem());
 				if (source.isDirectory() && !source.isExpanded()) {
 					ImageView iv = (ImageView) source.getGraphic();
 					iv.setImage(Images.FOLDER_COLLAPSED.getImage(size, size));

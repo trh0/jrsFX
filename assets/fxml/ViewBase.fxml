@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTreeView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.ListView?>
@@ -27,11 +27,11 @@
                      <items>
                         <Accordion fx:id="accordion">
                           <panes>
-                            <TitledPane fx:id="accTitledPane" alignment="CENTER" contentDisplay="CENTER" text="User">
+                            <TitledPane fx:id="accTitledPane" alignment="CENTER" contentDisplay="CENTER" text=" ">
                               <content>
                                 <AnchorPane fx:id="accAnchorPane" minHeight="0.0" minWidth="0.0">
                                        <children>
-                                          <JFXListView fx:id="accListView" layoutX="-62.0" layoutY="-41.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <JFXTreeView fx:id="accTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                               </content>

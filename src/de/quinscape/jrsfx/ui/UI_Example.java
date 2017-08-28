@@ -11,6 +11,7 @@ import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.data.Mapping;
+import de.quinscape.jrsfx.ui.components.Dialogs;
 import de.quinscape.jrsfx.util.ApplicationIO;
 import de.quinscape.jrsfx.util.Messages;
 import javafx.animation.Animation;

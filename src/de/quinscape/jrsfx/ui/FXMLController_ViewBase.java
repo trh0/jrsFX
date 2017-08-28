@@ -4,19 +4,24 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
+import de.quinscape.jrsfx.jasper.ReportClient;
+import de.quinscape.jrsfx.ui.components.JasperUI;
 import de.quinscape.jrsfx.util.ApplicationIO;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -46,68 +51,92 @@ public class FXMLController_ViewBase
 	private URL location;
 
 	@FXML // fx:id="root"
-	private AnchorPane root; // Value injected by FXMLLoader
+	private AnchorPane root;
 
 	@FXML // fx:id="borderPane"
-	private BorderPane borderPane; // Value injected by FXMLLoader
+	private BorderPane borderPane;
 
 	@FXML // fx:id="contentSplitPane"
-	private SplitPane contentSplitPane; // Value injected by FXMLLoader
+	private SplitPane contentSplitPane;
 
 	@FXML // fx:id="horizontalSplitPane"
-	private SplitPane horizontalSplitPane; // Value injected by FXMLLoader
+	private SplitPane horizontalSplitPane;
 
 	@FXML // fx:id="accordion"
-	private Accordion accordion; // Value injected by FXMLLoader
+	private Accordion accordion;
 
 	@FXML // fx:id="accTitledPane"
-	private TitledPane accTitledPane; // Value injected by FXMLLoader
+	private TitledPane accTitledPane;
 
 	@FXML // fx:id="accAnchorPane"
-	private AnchorPane accAnchorPane; // Value injected by FXMLLoader
+	private AnchorPane accAnchorPane;
 
-	@FXML // fx:id="accListView"
-	private JFXListView<?> accListView; // Value injected by FXMLLoader
+	@FXML // fx:id="accTreeVIew"
+	private JFXTreeView<String> accTreeView;
 
 	@FXML // fx:id="buttomListView"
-	private ListView<?> buttomListView; // Value injected by FXMLLoader
+	private ListView<?> buttomListView;
 
 	@FXML // fx:id="tabPane"
-	private TabPane tabPane; // Value injected by FXMLLoader
+	private TabPane tabPane;
 
 	@FXML // fx:id="tab"
-	private Tab tab; // Value injected by FXMLLoader
+	private Tab tab;
 
 	@FXML // fx:id="tabAnchorPane"
-	private AnchorPane tabAnchorPane; // Value injected by FXMLLoader
+	private AnchorPane tabAnchorPane;
 
 	@FXML // fx:id="footerSplitPane"
-	private SplitPane footerSplitPane; // Value injected by FXMLLoader
+	private SplitPane footerSplitPane;
 
 	@FXML // fx:id="progressBar"
-	private ProgressBar progressBar; // Value injected by FXMLLoader
+	private ProgressBar progressBar;
 
 	@FXML // fx:id="menuHBox"
-	private HBox menuHBox; // Value injected by FXMLLoader
+	private HBox menuHBox;
 
 	@FXML // fx:id="button1"
-	private JFXButton button1; // Value injected by FXMLLoader
+	private JFXButton button1;
 
 	@FXML // fx:id="button2"
-	private JFXButton button2; // Value injected by FXMLLoader
+	private JFXButton button2;
 
 	@FXML // fx:id="button3"
-	private JFXButton button3; // Value injected by FXMLLoader
+	private JFXButton button3;
 
 	@FXML // fx:id="button4"
-	private JFXButton button4; // Value injected by FXMLLoader
+	private JFXButton button4;
 
 	@FXML // fx:id="button5"
-	private JFXButton button5; // Value injected by FXMLLoader
+	private JFXButton button5;
 
 	@FXML
 	void connectJRS(ActionEvent event) {
+		ReportClient c = new ReportClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
+				StaticBase.instance().getConfig().getProperty("jrs.admin.pw"));
+		StaticBase.instance().getUiThread().runTask(() -> {
+			TreeItem<String> root = JasperUI.repositoryTreeItem(c.getResources(null, 0, 5000, null));
+			Platform.runLater(() -> {
+				this.accTreeView.setRoot(root);
+				MultipleSelectionModel<TreeItem<String>> sm = accTreeView.getSelectionModel();
+				sm.selectedItemProperty().addListener((o, ov, nv) -> {
+					StaticBase.instance().getUiThread().runTask(() -> {
+						String uri = "";
+						TreeItem<String> chld = sm.getSelectedItem();
+						while (chld != this.accTreeView.getRoot()) {
+							uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");
+							chld = chld.getParent();
+						}
+						this.handleSelectResource("/" + uri);
+					});
+				});
+				this.accTitledPane.setText("JRS Repository");
+			});
+		});
+	}
 
+	private void handleSelectResource(String uri) {
+		System.out.println(uri);
 	}
 
 	@FXML
@@ -125,8 +154,7 @@ public class FXMLController_ViewBase
 
 	}
 
-	@FXML // This method is called by the FXMLLoader when initialization is
-			// complete
+	@FXML
 	void initialize() {
 		assert root != null : "fx:id=\"root\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert borderPane != null : "fx:id=\"borderPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
@@ -135,7 +163,7 @@ public class FXMLController_ViewBase
 		assert accordion != null : "fx:id=\"accordion\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert accTitledPane != null : "fx:id=\"accTitledPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert accAnchorPane != null : "fx:id=\"accAnchorPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert accListView != null : "fx:id=\"accListView\" was not injected: check your FXML file 'ViewBase.fxml'.";
+		assert accTreeView != null : "fx:id=\"accTreeView\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert buttomListView != null : "fx:id=\"buttomListView\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert tabPane != null : "fx:id=\"tabPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
 		assert tab != null : "fx:id=\"tab\" was not injected: check your FXML file 'ViewBase.fxml'.";
