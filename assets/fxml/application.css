@@ -1,0 +1,77 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+*{
+	-fx-font-family: monospace;
+}
+.backgroundPane{
+	-fx-background-color: #222;
+	
+}
+.buttons, .toggle-button{
+	-fx-background-color: radial-gradient( focus-angle 0.0deg, focus-distance 0.0%, center 50.0% 50.0%, radius 50.0%, rgb(77,77,77) 0.0, rgb(0,0,0) 100.0 );
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+}
+.toggle-button:hover, .buttons:hover {
+	-fx-effect: innershadow(gaussian, rgba( 0, 0, 0, 0.5 ), 10, 0, 5, 5 );
+	-fx-background-color: radial-gradient( focus-angle 0.0deg, focus-distance 0.0%, center 50.0% 50.0%, radius 50.0%, rgb(122,122,122) 0.0, rgb(0,0,0) 100.0 );
+}
+.toggle-button:selected, .buttons:selected, .buttons:pressed {
+	-fx-background-color: radial-gradient( focus-angle 0.0deg, focus-distance 0.0%, center 50.0% 50.0%, radius 50.0%, rgb(92,180,88) 0.0, rgb(0,0,0) 100.0 );
+}
+.toggle-button:selected:focused, .buttons:selected:hover, .buttons:pressed:hover{
+	-fx-background-color: radial-gradient( focus-angle 0.0deg, focus-distance 0.0%, center 50.0% 50.0%, radius 50.0%, rgb(92,180,88) 0.0, rgb(0,0,0) 100.0 );
+	-fx-effect: innershadow(gaussian, rgba( 0, 0, 0, 0.5 ), 10, 0, 5, 5 );
+}
+.labels{
+	-fx-font-size: 110%;
+	-fx-font-weight: bolder;
+}
+.textFields{
+	-fx-background-color: #222;
+	-fx-text-fill: white;
+	-fx-font-size: 110%;
+	-fx-font-weight: bold;
+}
+.textContainer{
+	-fx-background-color: #222;
+}
+.text-area {
+	-fx-font-family: Consolas;
+	-fx-font-size: 125%;
+	-fx-text-fill: white ;
+}
+.text-area .content{
+	-fx-background-color: #222;
+}
+.combo-box>*.list-cell{
+	-fx-font-family: Consolas;
+	-fx-font-size: 100%;
+	-fx-text-fill: white ;
+}
+
+.tree-view, .tree-cell {
+    -fx-background-color: black ;
+    -fx-text-fill: rgb(124,124,124); 
+}
+.tree-cell:expanded, .tree-cell:sub-tree-item {
+    -fx-background-color: #222;
+}
+.tree-cell:collapsed, .tree-cell:sub-tree-item {
+    -fx-background-color: #333 ;
+}
+.tree-cell:selected {
+    -fx-font-weight: bold;
+    -fx-font-size: 125%;
+}
+.tree-cell {
+    -fx-padding: 0.75em 0em 0.75em 0em ;
+}
+.tree-cell:sub-tree-item {
+    -fx-padding: 0.25em ;
+}
+.tree-cell:expanded>*.tree-disclosure-node>*.arrow{
+	-fx-background-color: white;
+}
+.tree-cell:expanded>*.tree-disclosure-node>*.arrow{
+	-fx-background-color: red;
+}
