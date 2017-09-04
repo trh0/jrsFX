@@ -95,6 +95,8 @@ public class UIController
 			});
 
 			primaryStage.setScene(mainScene);
+			primaryStage.setWidth(1280);
+			primaryStage.setHeight(780);
 			primaryStage.initStyle(StageStyle.UNIFIED);
 			primaryStage.show();
 		}

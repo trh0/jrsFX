@@ -11,16 +11,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(
 		name = "resources")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RepositoryResourceWrapper {
+public class RepoTreeResourceWrapper {
 	@XmlElement(
 			name = "resourceLookup")
-	private final ArrayList<RepositoryResource> resources;
+	private final ArrayList<RepoTreeResource> resources;
 
-	public RepositoryResourceWrapper() {
+	public RepoTreeResourceWrapper() {
 		this.resources = new ArrayList<>();
 	}
 
-	public List<RepositoryResource> asList() {
+	public List<RepoTreeResource> asList() {
 		return this.resources;
 	}
 }

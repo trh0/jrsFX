@@ -7,7 +7,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
-import de.quinscape.jrsfx.jasper.ReportClient;
+import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
 import de.quinscape.jrsfx.ui.components.JasperUI;
 import de.quinscape.jrsfx.util.ApplicationIO;
 import javafx.application.Platform;
@@ -112,7 +112,7 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void connectJRS(ActionEvent event) {
-		ReportClient c = new ReportClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
+		JasperReportsRestClient c = new JasperReportsRestClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
 				StaticBase.instance().getConfig().getProperty("jrs.admin.pw"));
 		StaticBase.instance().getUiThread().runTask(() -> {
 			TreeItem<String> root = JasperUI.repositoryTreeItem(c.getResources(null, 0, 5000, null));

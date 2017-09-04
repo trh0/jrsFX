@@ -1,0 +1,945 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Jaspersoft REST",
+		"_postman_id": "2d0b6063-05af-004a-a5cf-a90434538a8a",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Attributes",
+			"description": "",
+			"item": [
+				{
+					"name": "Set Attribute",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "superuser",
+								"password": "superuser",
+								"showPassword": false
+							}
+						},
+						"url": "http://localhost:8080/jasperserver-pro/rest_v2/organizations/organization_1/attributes",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"attribute\":[\n{\n\"name\": \"Attr1\", \"value\":\"newValue1\"\n}, {\n\"name\": \"Attr2\",\n\"value\":\"newValue2a, newValue2b\" },\n{\n\"name\": \"Attr3\" \"value\": \"SecureValue3\" \"secure\": \"true\"\n} ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attribute",
+					"request": {
+						"url": "http://open-source-bi-vm:8082/jasperserver-pro/rest_v2/organizations/organization_1/users/extAuthTest/attributes",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnF1aW5jeQ==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"attribute\":[\n{\n\"name\": \"Attr1\", \"value\":\"newValue1\"\n}, {\n\"name\": \"Attr2\",\n\"value\":\"newValue2a, newValue2b\" },\n{\n\"name\": \"Attr3\" \"value\": \"SecureValue3\" \"secure\": \"true\"\n} ]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "Logout",
+					"request": {
+						"url": "http://localhost:8088/jasperserver-pro/rest_v2/logout/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic Og==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "j_username",
+									"value": "jasperadmin",
+									"type": "text"
+								},
+								{
+									"key": "j_username",
+									"value": "jasperadmin",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": {
+								"username": "",
+								"password": "",
+								"showPassword": false
+							}
+						},
+						"url": "http://localhost:8080/jasperserver-pro/rest/login",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "j_username",
+									"value": "superuser",
+									"type": "text"
+								},
+								{
+									"key": "j_password",
+									"value": "superuser",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"url": "http://192.168.56.101:8080/jasperserver-pro/logout.html",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "SSO Token",
+					"request": {
+						"url": "http://localhost:8088/jasperserver-pro/j_spring_security_check/?ticket=TicketValue",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic Og==",
+								"description": ""
+							},
+							{
+								"key": "ticket",
+								"value": "someTicket",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "j_username",
+									"value": "jasperadmin",
+									"type": "text"
+								},
+								{
+									"key": "j_username",
+									"value": "jasperadmin",
+									"type": "text"
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Export",
+			"description": "",
+			"item": [
+				{
+					"name": "Request Export",
+					"request": {
+						"url": "http://localhost:8080/jasperserver-pro/rest_v2/export/",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"roles\" : [\"ROLE_USER\",\"ROLE_EXEC|organization_1\"],\n\"users\" : [\"superuser\",\"demo|organization_1\"],\n\"uris\" : [\"/public/Samples/Reports/AllAccounts\", \"/organizations/organization_1/reports/Survey/Survey_Data\"], \n\"parameters\" : [\"role-users\", \"repository-permissions\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Check Export Status",
+					"request": {
+						"url": "http://localhost:8080/jasperserver-pro/rest_v2/export/23bcab04-884e-42fc-ae2a-17795773deca/state",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Download Export",
+					"request": {
+						"url": "http://localhost:8080/jasperserver-pro/rest_v2/export/23bcab04-884e-42fc-ae2a-17795773deca/file",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/zip",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users/Roles",
+			"description": "",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"url": "http://localhost:8088/jasperserver-pro/rest_v2/organizations/organization_1/users/restTest",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fullName\":\"restTest\", \n \t\"emailAddress\":\"restTest@example.com\",\n  \t\"enabled\":true,\n  \"externallyDefined\":false, \n  \t\"password\":\"restTest\",\n  \t\"roles\":[\n\t\t{\"name\":\"ROLE_USER\"}] \n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create User BoschExample",
+					"request": {
+						"url": "https://pilot.bosch-fleet.com/jasperserver-pro/rest_v2/organizations/organization_1/users/restTest",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic a2hhZmVya2FtcDohcXVpblNjYXBlMTIzPw==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fullName\":\"restTest\", \n \t\"emailAddress\":\"restTest@example.com\",\n  \t\"enabled\":true,\n  \"externallyDefined\":true, \n  \t\"password\":\"restTest\",\n  \t\"roles\":[\n\t\t{\"name\":\"ROLE_USER\"}] \n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "View User",
+					"request": {
+						"url": "http://localhost:8088/jasperserver-pro/rest_v2/organizations/organization_1/users/restTest",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Basic c3VwZXJ1c2VyOnN1cGVydXNlcg==",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fullName\":\"Joe User\", \n \t\"emailAddress\":\"juser@example.com\",\n  \t\"enabled\":true,\n  \"externallyDefined\":true,\n  \t\"password\":\"mySecretPassword\",\n  \t\"roles\":[\n\t\t{\"name\":\"ROLE_USER\"}] \n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "v2/reports Service (Run Report)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reports/public/Samples/Reports/TopFivesReport.html?endMonth=7&startMonth=6",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/resources (Viewing Details)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/resources/public/Samples/Data_Sources/FoodmartDataSource",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/resources (Creating a new Resource)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/resources/public/Test_Folder?createFolders=true",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/repository.folder+json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"uri\" : \"/public/Test_Folder\",\n    \"label\" : \"Test Label\",\n    \"description\" : \"some description\",\n    \"permissionMask\":\"0\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/resources (Deleting a Resource)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/resources/public/Test_Folder",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/permissions (Viewing Permissions)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/permissions/public/Samples/Data_Sources/FoodmartDataSource?resolveAll=true",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/permissions (Setting Permissions)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/permissions",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"uri\":\"/public/Samples/Data_Sources/FoodmartDataSource\",\n    \"recipient\":\"role:/ROLE_USER\",\n    \"mask\":\"2\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/jobs (Pause Running Jobs)",
+			"request": {
+				"url": "http://178.62.46.101:8080/jasperserver-pro/rest_v2/jobs/pause/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<jobIdList>\n</jobIdList>\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/jobs (Resume Running Jobs)",
+			"request": {
+				"url": "http://178.62.46.101:8080/jasperserver-pro/rest_v2/jobs/resume/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<jobIdList>\n</jobIdList>\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/jobs (Scheduling)",
+			"request": {
+				"url": "http://localhost:8088/jasperserver-pro/rest_v2/jobs/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmVzdFRlc3R8b3JnYW5pemF0aW9uXzE6cmVzdFRlc3Q=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<job>\n\t<baseOutputFilename>Top5Report</baseOutputFilename>\n\t<repositoryDestination>\n\t\t<folderURI>/organizations/organization_1/Output</folderURI>\n\t\t<outputDescription/>\n\t\t<overwriteFiles>false</overwriteFiles>\n\t\t<sequentialFilenames>false</sequentialFilenames>\n\t\t<version>0</version>\n\t</repositoryDestination>\n\t<description/>\n\t\n\t<label>MyNewJob</label>\n\t<mailNotification>\n\t\t<bccAddresses/>\n\t\t<ccAddresses/>\n\t\t<includingStackTraceWhenJobFails>false</includingStackTraceWhenJobFails>\n\t\t<messageText>Body of message</messageText><resultSendType>SEND_ATTACHMENT</resultSendType>\n\t\t<skipEmptyReports>true</skipEmptyReports>\n\t\t<skipNotificationWhenJobFails>false</skipNotificationWhenJobFails>\n\t\t<subject>Subject of message</subject>\n\t\t<toAddresses><address>test@jaspersoft.com</address></toAddresses>\n\t\t<version>0</version>\n\t</mailNotification>\n\t<outputFormats>\n\t\t<outputFormat>PDF</outputFormat>\n\t\t<outputFormat>HTML</outputFormat>\n\t</outputFormats>\n\t<outputLocale/>\n\t\n <source> \n  <reportUnitURI>/public/Samples/Reports/AllAccounts</reportUnitURI>\n   <parameters>\n     <entry>\n       <key>startMonth</key><value>6</value>\n     </entry>\n     <entry>\n       <key>endMonth</key><value>10</value>\n     </entry>\n   </parameters>\n  </source>\n\t<simpleTrigger>\n\t\t<startDate>2017-04-15T10:30:00+01:00</startDate>\n\t\t<timezone>Europe/Madrid</timezone>\n\t\t<occurrenceCount>1</occurrenceCount>\n\t</simpleTrigger>\n\t<version>1</version>\n</job>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/jobs (Scheduling) BoschExample",
+			"request": {
+				"url": "http://localhost:8088/jasperserver-pro/rest_v2/jobs/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic Y1JpY2hhcmRzfHVzZXJzOmNSaWNoYXJkcw==",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "JSESSIONID",
+						"value": "5D4C0F8F63A9F21B7CA6A5DFB6112FD4",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest, OWASP CSRFGuard Project",
+						"description": ""
+					},
+					{
+						"key": "X-Suppress-Basic",
+						"value": "true",
+						"description": ""
+					},
+					{
+						"key": "Cookie",
+						"value": "JSESSIONID=5D4C0F8F63A9F21B7CA6A5DFB6112FD4",
+						"description": ""
+					},
+					{
+						"key": "pp",
+						"value": "u=CliffordMay|r=ROLE_USER|o=users|exp=201704010000",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "userLocale",
+						"value": "de_DE",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<job>\n\t<baseOutputFilename>Top5Report</baseOutputFilename>\n\t<repositoryDestination>\n\t\t<folderURI>/public/Temp</folderURI>\n\t\t<outputDescription/>\n\t\t<overwriteFiles>false</overwriteFiles>\n\t\t<sequentialFilenames>false</sequentialFilenames>\n\t\t<version>0</version>\n\t</repositoryDestination>\n\t<description/>\n\t\n\t<label>MyNewJob</label>\n\t<mailNotification>\n\t\t<bccAddresses/>\n\t\t<ccAddresses/>\n\t\t<includingStackTraceWhenJobFails>false</includingStackTraceWhenJobFails>\n\t\t<messageText>Body of message</messageText><resultSendType>SEND_ATTACHMENT</resultSendType>\n\t\t<resultSendType>SEND_ATTACHMENT</resultSendType>\n\t\t<skipEmptyReports>true</skipEmptyReports>\n\t\t<skipNotificationWhenJobFails>false</skipNotificationWhenJobFails>\n\t\t<subject>Subject of message</subject>\n\t\t<toAddresses><address>tobias.koll@quinscape.de</address></toAddresses>\n\t\t<version>0</version>\n\t</mailNotification>\n\t<outputFormats>\n\t\t<outputFormat>PDF</outputFormat>\n\t\t<outputFormat>HTML</outputFormat>\n\t</outputFormats>\n\t<outputLocale/>\n\t\n <source> \n  <reportUnitURI>/public/Samples/Reports/AllAccounts</reportUnitURI>\n   <parameters>\n     <entry>\n       <key>startMonth</key><value>6</value>\n     </entry>\n     <entry>\n       <key>endMonth</key><value>10</value>\n     </entry>\n   </parameters>\n  </source>\n\t<simpleTrigger>\n\t\t<startDate>2017-03-30T18:50:00+01:00</startDate>\n\t\t<timezone>Europe/Madrid</timezone>\n\t\t<occurrenceCount>1</occurrenceCount>\n\t</simpleTrigger>\n\t<version>1</version>\n</job>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/AuthCall (Scheduling) BoschExample",
+			"request": {
+				"url": "http://localhost:8088/jasperserver-pro/",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic Y1JpY2hhcmRzfHVzZXJzOmNSaWNoYXJkcw==",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "Cookie",
+						"value": "JSESSIONID=323A861F7538A63D191C268F60EE5DAB",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest, OWASP CSRFGuard Project",
+						"description": ""
+					},
+					{
+						"key": "X-Suppress-Basic",
+						"value": "true",
+						"description": ""
+					},
+					{
+						"key": "Referer",
+						"value": "",
+						"description": "",
+						"disabled": true
+					},
+					{
+						"key": "pp",
+						"value": "u=CliffordMay|r=ROLE_USER|o=users|exp=201704010000",
+						"description": ""
+					},
+					{
+						"key": "userLocale",
+						"value": "de_DE",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<job>\n\t<baseOutputFilename>Top5Report</baseOutputFilename>\n\t<repositoryDestination>\n\t\t<folderURI>/public/Temp</folderURI>\n\t\t<outputDescription/>\n\t\t<overwriteFiles>false</overwriteFiles>\n\t\t<sequentialFilenames>false</sequentialFilenames>\n\t\t<version>0</version>\n\t</repositoryDestination>\n\t<description/>\n\t\n\t<label>MyNewJob</label>\n\t<mailNotification>\n\t\t<bccAddresses/>\n\t\t<ccAddresses/>\n\t\t<includingStackTraceWhenJobFails>false</includingStackTraceWhenJobFails>\n\t\t<messageText>Body of message</messageText><resultSendType>SEND_ATTACHMENT</resultSendType>\n\t\t<resultSendType>SEND_ATTACHMENT</resultSendType>\n\t\t<skipEmptyReports>true</skipEmptyReports>\n\t\t<skipNotificationWhenJobFails>false</skipNotificationWhenJobFails>\n\t\t<subject>Subject of message</subject>\n\t\t<toAddresses><address>tobias.koll@quinscape.de</address></toAddresses>\n\t\t<version>0</version>\n\t</mailNotification>\n\t<outputFormats>\n\t\t<outputFormat>PDF</outputFormat>\n\t\t<outputFormat>HTML</outputFormat>\n\t</outputFormats>\n\t<outputLocale/>\n\t\n <source> \n  <reportUnitURI>/public/Samples/Reports/AllAccounts</reportUnitURI>\n   <parameters>\n     <entry>\n       <key>startMonth</key><value>6</value>\n     </entry>\n     <entry>\n       <key>endMonth</key><value>10</value>\n     </entry>\n   </parameters>\n  </source>\n\t<simpleTrigger>\n\t\t<startDate>2017-04-15T10:30:00+01:00</startDate>\n\t\t<timezone>Europe/Madrid</timezone>\n\t\t<occurrenceCount>1</occurrenceCount>\n\t</simpleTrigger>\n\t<version>1</version>\n</job>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/reportExecutions (Run Report Async)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reportExecutions",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<reportExecutionRequest>\n <reportUnitUri>/public/Samples/Reports/AllAccounts</reportUnitUri>\n    <async>true</async>\n    <freshData>false</freshData>\n    <saveDataSnapshot>false</saveDataSnapshot>\n    <outputFormat>html</outputFormat>\n    <interactive>true</interactive>\n    <ignorePagination>false</ignorePagination>\n    <pages>2</pages>\n</reportExecutionRequest>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/reportExecutions (Check Report Async Status)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reportExecutions/1648502574_1396533890548_266/status",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/reportExecutions (Request Report Async Output)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reportExecutions/1648502574_1396533890548_266/exports/PDF/outputResource",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/reports (Get IC Values)",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reports/public/Samples/Reports/9.CustomerDetailReport/inputControls/values",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/resources (Searching Reports)",
+			"request": {
+				"url": "http://192.168.56.101:8080/jasperserver-pro/rest_v2/resources?j_username=jasperadmin&j_password=jasperadmin&folderUri=/public/Samples/Reports&type=reportUnit&recursive=true",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/calendars (Scheduling add/update calendar)",
+			"request": {
+				"url": "http://localhost:8083/jasperserver-pro/rest_v2/jobs/calendars/monthly_exclude",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n<reportJobCalendar>\r\n  <calendarType>monthly</calendarType>\r\n  <description>Monthly calendar description</description>\r\n  <excludeDaysFlags>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag> \r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>true</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n    <excludeDayFlag>false</excludeDayFlag>\r\n</excludeDaysFlags>\r\n<timeZone>GMT+03:00</timeZone>\r\n</reportJobCalendar>"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/calendars (List Calendars)",
+			"request": {
+				"url": "http://localhost:8083/jasperserver-pro/rest_v2/jobs/calendars",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "v2/reports Service (Run Report) copy",
+			"request": {
+				"url": "http://localhost:8080/jasperserver-pro/rest_v2/reports/public/Samples/Reports/TopFivesReport.html?endMonth=7&startMonth=6",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic amFzcGVyYWRtaW46amFzcGVyYWRtaW4=",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "SB TEST1",
+			"request": {
+				"url": "http://jaspersoft-demo-vm:8080/jasperserver-pro/rest_v2/reports/document_templates/default/cam/contractual/rental_contract.pdf?j_username=jasperadmin%7CSB&j_password=QSjasperadminS%26B",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

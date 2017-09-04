@@ -13,9 +13,9 @@ import de.quinscape.jrsfx.data.DateTimeAdapter;
 @XmlRootElement(
 		name = "resourceLookup")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RepositoryResource {
+public class RepoTreeResource {
 
-	public RepositoryResource(DateTime creationDate, DateTime updateDate, String description, String label,
+	public RepoTreeResource(DateTime creationDate, DateTime updateDate, String description, String label,
 			int permissionMask, String uri, String type) {
 		super();
 		this.creationDate = creationDate;
@@ -31,7 +31,7 @@ public class RepositoryResource {
 	 * Jaxb Constructor
 	 */
 	@SuppressWarnings("unused")
-	private RepositoryResource() {
+	private RepoTreeResource() {
 		super();
 		this.creationDate = null;
 		this.updateDate = null;

@@ -5,7 +5,7 @@ import de.quinscape.jrsfx.util.ApplicationIO;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class Main
+public class JRS_FX
 		extends Application {
 	@Override
 	public void start(Stage primaryStage) {

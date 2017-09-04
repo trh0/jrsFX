@@ -20,9 +20,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ReportClient {
+public class JasperReportsRestClient {
 
-	public ReportClient(String orga, String username, String password) {
+	public JasperReportsRestClient(String orga, String username, String password) {
 		this.orga = orga;
 		this.user = username;
 		this.password = password;
@@ -146,8 +146,8 @@ public class ReportClient {
 		return data;
 	}
 
-	public List<RepositoryResource> getResources(String searchFor, int startFrom, int limit, String type) {
-		List<RepositoryResource> data = null;
+	public List<RepoTreeResource> getResources(String searchFor, int startFrom, int limit, String type) {
+		List<RepoTreeResource> data = null;
 		if (!this.auth()) {
 			ApplicationIO.toErrorStream("Login failed.");
 			return data;
@@ -159,9 +159,9 @@ public class ReportClient {
 		Response res = null;
 		try {
 			res = client.newCall(req).execute();
-			JAXBContext c = JAXBContext.newInstance(RepositoryResourceWrapper.class, RepositoryResource.class,
+			JAXBContext c = JAXBContext.newInstance(RepoTreeResourceWrapper.class, RepoTreeResource.class,
 					ArrayList.class);
-			data = RepositoryResourceWrapper.class.cast(c.createUnmarshaller().unmarshal(res.body().charStream()))
+			data = RepoTreeResourceWrapper.class.cast(c.createUnmarshaller().unmarshal(res.body().charStream()))
 					.asList();
 		}
 		catch (Exception e) {
