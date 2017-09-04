@@ -19,7 +19,7 @@ public class ApplicationIO {
 
 	private ApplicationIO() {}
 
-	private static PrintStream out = System.err;
+	private static final PrintStream out = System.err;
 	private static final Logger LOG = Logger.getGlobal();
 
 	/**
@@ -68,7 +68,7 @@ public class ApplicationIO {
 		Throwable ex = null;
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
-				sb.append("%s\n");
+				sb.append("%s  - ");
 				if (args[i] instanceof Throwable) {
 					for (StackTraceElement el : ((Throwable) args[i]).getStackTrace()) {
 						sb.append(el.toString());

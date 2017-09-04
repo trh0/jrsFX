@@ -4,27 +4,40 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
+import de.quinscape.jrsfx.ui.components.CodeEditor;
 import de.quinscape.jrsfx.ui.components.JasperUI;
 import de.quinscape.jrsfx.util.ApplicationIO;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.Transition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.ListView;
+import javafx.scene.control.Control;
 import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
+import javafx.util.Duration;
 
 public class FXMLController_ViewBase
 		extends AnchorPane
@@ -33,6 +46,7 @@ public class FXMLController_ViewBase
 	private final String FXML_LOCATION = "fxml/ViewBase.fxml";
 	private final String STYLESHEET = "fxml/application.css";
 	public static final Byte IDX = 1;
+	private JasperReportsRestClient jrsClient;
 
 	@Override
 	public String getFxmlLocation() {
@@ -74,8 +88,8 @@ public class FXMLController_ViewBase
 	@FXML // fx:id="accTreeVIew"
 	private JFXTreeView<String> accTreeView;
 
-	@FXML // fx:id="buttomListView"
-	private ListView<?> buttomListView;
+	@FXML
+	private VBox sidebarVBox;
 
 	@FXML // fx:id="tabPane"
 	private TabPane tabPane;
@@ -86,11 +100,14 @@ public class FXMLController_ViewBase
 	@FXML // fx:id="tabAnchorPane"
 	private AnchorPane tabAnchorPane;
 
-	@FXML // fx:id="footerSplitPane"
-	private SplitPane footerSplitPane;
+	@FXML
+	private WebView welcomeWebView;
+
+	@FXML
+	private VBox topWrapperVBox;
 
 	@FXML // fx:id="progressBar"
-	private ProgressBar progressBar;
+	private JFXProgressBar progressBar;
 
 	@FXML // fx:id="menuHBox"
 	private HBox menuHBox;
@@ -112,10 +129,29 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void connectJRS(ActionEvent event) {
-		JasperReportsRestClient c = new JasperReportsRestClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
-				StaticBase.instance().getConfig().getProperty("jrs.admin.pw"));
+		SimpleDoubleProperty prop = new SimpleDoubleProperty();
+		progressBar.progressProperty().bind(prop);
+
+		progressBar.setStyle("-fx-accent: red;");
+		final Animation animation = new Transition() {
+			{
+				setCycleDuration(Duration.millis(750));
+				setInterpolator(Interpolator.EASE_OUT);
+			}
+
+			@Override
+			protected void interpolate(double frac) {
+				progressBar.setStyle("-fx-accent: rgba( 0, 255, 0," + (1 - frac) + ")");
+				if (frac > 0.99) {
+					progressBar.progressProperty().unbind();
+					progressBar.setProgress(0);
+					this.stop();
+				}
+			}
+		};
+
 		StaticBase.instance().getUiThread().runTask(() -> {
-			TreeItem<String> root = JasperUI.repositoryTreeItem(c.getResources(null, 0, 5000, null));
+			TreeItem<String> root = JasperUI.repositoryTreeItem(jrsClient.getResources(null, 0, 1500, null), prop);
 			Platform.runLater(() -> {
 				this.accTreeView.setRoot(root);
 				MultipleSelectionModel<TreeItem<String>> sm = accTreeView.getSelectionModel();
@@ -127,15 +163,27 @@ public class FXMLController_ViewBase
 							uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");
 							chld = chld.getParent();
 						}
-						this.handleSelectResource("/" + uri);
+						this.handleSelectResource("/" + uri, nv.getValue());
 					});
 				});
 				this.accTitledPane.setText("JRS Repository");
+				progressBar.setStyle("-fx-accent:green;");
+				animation.play();
 			});
 		});
+
 	}
 
-	private void handleSelectResource(String uri) {
+	private void handleSelectResource(String uri, String value) {
+		StaticBase.instance().getDataThread().runTask(() -> {
+			String s = jrsClient.getResourceDetail(uri, true);
+			Platform.runLater(() -> {
+				CodeEditor ce = new CodeEditor(s, value);
+				ce.getPane().prefWidthProperty().bind(tabPane.widthProperty());
+				ce.getPane().prefHeightProperty().bind(tabPane.heightProperty());
+				this.tabPane.getTabs().add(ce);
+			});
+		});
 		System.out.println(uri);
 	}
 
@@ -156,27 +204,26 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void initialize() {
-		assert root != null : "fx:id=\"root\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert borderPane != null : "fx:id=\"borderPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert contentSplitPane != null : "fx:id=\"contentSplitPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert horizontalSplitPane != null : "fx:id=\"horizontalSplitPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert accordion != null : "fx:id=\"accordion\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert accTitledPane != null : "fx:id=\"accTitledPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert accAnchorPane != null : "fx:id=\"accAnchorPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert accTreeView != null : "fx:id=\"accTreeView\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert buttomListView != null : "fx:id=\"buttomListView\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert tabPane != null : "fx:id=\"tabPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert tab != null : "fx:id=\"tab\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert tabAnchorPane != null : "fx:id=\"tabAnchorPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert footerSplitPane != null : "fx:id=\"footerSplitPane\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert progressBar != null : "fx:id=\"progressBar\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert menuHBox != null : "fx:id=\"menuHBox\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert button1 != null : "fx:id=\"button1\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert button2 != null : "fx:id=\"button2\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert button3 != null : "fx:id=\"button3\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert button4 != null : "fx:id=\"button4\" was not injected: check your FXML file 'ViewBase.fxml'.";
-		assert button5 != null : "fx:id=\"button5\" was not injected: check your FXML file 'ViewBase.fxml'.";
+		jrsClient = new JasperReportsRestClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
+				StaticBase.instance().getConfig().getProperty("jrs.admin.pw"));
+		progressBar.setStyle("");
 
 	}
 
+	// TODO example
+	public Animation animationFor(Control region, double r, double g, double b) {
+		final Animation animation = new Transition() {
+			{
+				setCycleDuration(Duration.millis(500));
+				setInterpolator(Interpolator.EASE_OUT);
+			}
+
+			@Override
+			protected void interpolate(double frac) {
+				Color vColor = new Color(r, g, b, 1 - frac);
+				region.setBackground(new Background(new BackgroundFill(vColor, CornerRadii.EMPTY, Insets.EMPTY)));
+			}
+		};
+		return animation;
+	}
 }

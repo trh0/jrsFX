@@ -40,6 +40,10 @@ public class JasperReportsRestClient {
 	private String sessionID = null;
 	private final OkHttpClient client;
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean auth() {
 		boolean success = false;
 
@@ -80,6 +84,28 @@ public class JasperReportsRestClient {
 		return success;
 	}
 
+	/**
+	 * 
+	 * @param keysAndValues
+	 * @return
+	 */
+	private Headers getHeaders(String... keysAndValues) {
+		Headers h = null;
+		if (keysAndValues != null) {
+			h = Headers.of("Cookie", "$Version=0; JSESSIONID=" + sessionID + "; $Path=/jasperserver");
+		}
+		else {
+			h = Headers.of("Cookie", "$Version=0; JSESSIONID=" + sessionID + "; $Path=/jasperserver");
+		}
+		return h;
+	}
+
+	/**
+	 * 
+	 * @param resource
+	 * @param params
+	 * @return
+	 */
 	public String getReportHtml(String resource, Map<String, String> params) {
 		String htmlReport = null;
 
@@ -99,9 +125,7 @@ public class JasperReportsRestClient {
 			}
 		}
 
-		Headers headers = Headers.of("Cookie", "$Version=0; JSESSIONID=" + sessionID + "; $Path=/jasperserver");
-
-		Request req = new Request.Builder().url(url).headers(headers).get().build();
+		Request req = new Request.Builder().url(url).headers(getHeaders()).get().build();
 		Response res = null;
 
 		try {
@@ -114,6 +138,12 @@ public class JasperReportsRestClient {
 		return htmlReport;
 	}
 
+	/**
+	 * 
+	 * @param resource
+	 * @param params
+	 * @return
+	 */
 	public byte[] getReportPdf(String resource, Map<String, String> params) {
 		byte[] data = null;
 		if (!this.auth()) {
@@ -131,9 +161,7 @@ public class JasperReportsRestClient {
 			}
 		}
 
-		Headers headers = Headers.of("Cookie", "$Version=0; JSESSIONID=" + sessionID + "; $Path=/jasperserver");
-
-		Request req = new Request.Builder().url(url).headers(headers).get().build();
+		Request req = new Request.Builder().url(url).headers(getHeaders()).get().build();
 		Response res = null;
 		try {
 			res = client.newCall(req).execute();
@@ -142,20 +170,27 @@ public class JasperReportsRestClient {
 		catch (Exception e) {
 			ApplicationIO.toErrorStream(e);
 		}
-		ApplicationIO.toErrorStream(data.length);
 		return data;
 	}
 
+	/**
+	 * 
+	 * @param searchFor
+	 * @param startFrom
+	 * @param limit
+	 * @param type
+	 * @return
+	 */
 	public List<RepoTreeResource> getResources(String searchFor, int startFrom, int limit, String type) {
 		List<RepoTreeResource> data = null;
 		if (!this.auth()) {
-			ApplicationIO.toErrorStream("Login failed.");
+			ApplicationIO.toErrorStream(this.getClass().getName(), "[getResources]", "params:", searchFor, startFrom,
+					limit, type, "Login failed.");
 			return data;
 		}
-		Headers headers = Headers.of("Cookie", "$Version=0; JSESSIONID=" + sessionID + "; $Path=/jasperserver");
 		String url = SERVER_BASE_URL + REST_RESOURCES + "?offset=" + startFrom + "&limit=" + limit + (searchFor != null
 				? "&q=" + searchFor : "") + (type != null ? "&type=" + type : "");
-		Request req = new Request.Builder().url(url).headers(headers).get().build();
+		Request req = new Request.Builder().url(url).headers(getHeaders()).get().build();
 		Response res = null;
 		try {
 			res = client.newCall(req).execute();
@@ -171,4 +206,25 @@ public class JasperReportsRestClient {
 		return data;
 	}
 
+	public String getResourceDetail(String uri, boolean viewNested) {
+		String result = null;
+		if (!this.auth()) {
+			ApplicationIO.toErrorStream(this.getClass().getName(), "[viewResourceDetail]", "params:", uri,
+					"Login failed.");
+		}
+		else {
+			String url = SERVER_BASE_URL + REST_RESOURCES + (uri.startsWith("/") ? uri : "/" + uri) + ("?expanded="
+					+ viewNested);
+			Request req = new Request.Builder().url(url).headers(getHeaders()).get().build();
+			Response res = null;
+			try {
+				res = client.newCall(req).execute();
+				result = res.body().string();
+			}
+			catch (Exception e) {
+				ApplicationIO.toErrorStream(e);
+			}
+		}
+		return result;
+	}
 }

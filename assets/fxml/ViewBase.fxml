@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXTreeView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -14,14 +13,16 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
+<?import javafx.scene.web.WebView?>
 
 <fx:root fx:id="root" cacheHint="SPEED" depthTest="ENABLE" prefHeight="616.0" prefWidth="835.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="borderPane" layoutX="6.0" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
-            <SplitPane fx:id="contentSplitPane" dividerPositions="0.2">
+            <SplitPane fx:id="contentSplitPane" dividerPositions="0.2" BorderPane.alignment="CENTER">
                <items>
                   <SplitPane fx:id="horizontalSplitPane" dividerPositions="0.6" orientation="VERTICAL">
                      <items>
@@ -38,14 +39,17 @@
                             </TitledPane>
                           </panes>
                         </Accordion>
-                        <ListView fx:id="buttomListView" />
+                        <VBox fx:id="sidebarVBox" prefHeight="150.0" />
                      </items>
                   </SplitPane>
                   <TabPane fx:id="tabPane" depthTest="ENABLE" tabClosingPolicy="ALL_TABS" BorderPane.alignment="CENTER">
                     <tabs>
                       <Tab fx:id="tab" text="Welcome">
                         <content>
-                          <AnchorPane fx:id="tabAnchorPane" minHeight="0.0" minWidth="0.0" />
+                          <AnchorPane fx:id="tabAnchorPane" minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <WebView fx:id="welcomeWebView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children></AnchorPane>
                         </content>
                       </Tab>
                     </tabs>
@@ -53,83 +57,81 @@
                </items>
             </SplitPane>
          </center>
-         <bottom>
-            <SplitPane fx:id="footerSplitPane" depthTest="ENABLE">
-               <items>
-                  <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0" />
-               </items>
-            </SplitPane>
-         </bottom>
          <top>
-            <HBox fx:id="menuHBox" cache="true" prefHeight="25.0" prefWidth="738.0" BorderPane.alignment="CENTER">
-               <children>
-                  <JFXButton fx:id="button1" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#connectJRS" prefWidth="500.0" ripplerFill="#197212" text="%menu.connect.label" HBox.hgrow="ALWAYS">
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="button2" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
-                     <ripplerFill>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop color="#0d5708" />
-                              <Stop color="WHITE" offset="1.0" />
-                           </stops>
-                        </LinearGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="button21" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
-                     <ripplerFill>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop color="#0d5708" />
-                              <Stop color="WHITE" offset="1.0" />
-                           </stops>
-                        </LinearGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="button211" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
-                     <ripplerFill>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop color="#0d5708" />
-                              <Stop color="WHITE" offset="1.0" />
-                           </stops>
-                        </LinearGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="button4" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#togglePreferences" prefWidth="500.0" text="%button.prefs.label" HBox.hgrow="ALWAYS">
-                     <ripplerFill>
-                        <LinearGradient endX="1.0" endY="1.0">
-                           <stops>
-                              <Stop color="#0d5708" />
-                              <Stop color="WHITE" offset="1.0" />
-                           </stops>
-                        </LinearGradient>
-                     </ripplerFill>
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-                  <JFXButton fx:id="button5" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#toggleExit" prefWidth="500.0" ripplerFill="#418d12" text="%button.exit.label" HBox.hgrow="ALWAYS">
-                     <HBox.margin>
-                        <Insets bottom="5.0" />
-                     </HBox.margin>
-                  </JFXButton>
-               </children>
+            <VBox fx:id="topWrapperVBox" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
-            </HBox>
+               <children>
+                  <HBox fx:id="menuHBox" alignment="CENTER" cache="true" VBox.vgrow="ALWAYS">
+                     <children>
+                        <JFXButton fx:id="button1" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#connectJRS" prefWidth="500.0" ripplerFill="#197212" text="%menu.connect.label" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="button2" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
+                           <ripplerFill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop color="#0d5708" />
+                                    <Stop color="WHITE" offset="1.0" />
+                                 </stops>
+                              </LinearGradient>
+                           </ripplerFill>
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="button21" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
+                           <ripplerFill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop color="#0d5708" />
+                                    <Stop color="WHITE" offset="1.0" />
+                                 </stops>
+                              </LinearGradient>
+                           </ripplerFill>
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="button211" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" prefWidth="500.0" text="%button.add.label" HBox.hgrow="ALWAYS">
+                           <ripplerFill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop color="#0d5708" />
+                                    <Stop color="WHITE" offset="1.0" />
+                                 </stops>
+                              </LinearGradient>
+                           </ripplerFill>
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="button4" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#togglePreferences" prefWidth="500.0" text="%button.prefs.label" HBox.hgrow="ALWAYS">
+                           <ripplerFill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop color="#0d5708" />
+                                    <Stop color="WHITE" offset="1.0" />
+                                 </stops>
+                              </LinearGradient>
+                           </ripplerFill>
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="button5" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" onAction="#toggleExit" prefWidth="500.0" ripplerFill="#418d12" text="%button.exit.label" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="5.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                     </children>
+                  </HBox>
+                  <JFXProgressBar fx:id="progressBar" prefHeight="10.0" prefWidth="12000.0" progress="0.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
          </top>
       </BorderPane>
    </children>
