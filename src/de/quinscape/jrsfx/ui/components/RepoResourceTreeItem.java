@@ -2,6 +2,7 @@ package de.quinscape.jrsfx.ui.components;
 
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
+import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.Images;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
@@ -43,6 +44,31 @@ public class RepoResourceTreeItem
 		addHandlers();
 	}
 
+	public RepoResourceTreeItem(String value, javafx.scene.Node graphic) {
+		super(value, graphic);
+		this.overrideType = ResourceMediaType.FOLDER_TYPE;
+		this.details = null;
+		init(null, overrideType);
+		addHandlers();
+	}
+
+	public RepoResourceTreeItem(String value, RepoTreeResource resource, javafx.scene.Node graphic) {
+		super(value, graphic);
+		this.overrideType = resource.getResourceType();
+		this.details = resource;
+		init(resource, overrideType);
+		addHandlers();
+	}
+
+	public RepoResourceTreeItem(String value, RepoTreeResource resource, String overrideType,
+			javafx.scene.Node graphic) {
+		super(value, graphic);
+		this.details = resource;
+		this.overrideType = overrideType;
+		init(resource, overrideType);
+		addHandlers();
+	}
+
 	/**
 	 * Init 1 - Building the TreeItem and searching for children.
 	 * 
@@ -52,17 +78,14 @@ public class RepoResourceTreeItem
 	 * @param type
 	 */
 	private void init(RepoTreeResource resource, String type) {
-
-		// test if this is a directory and set the icon
-		if (resource.getResourceType().equals(RepoTreeResource.FOLDER)) {
-			this.setGraphic(Images.FOLDER_COLLAPSED.getImageView(imgSize, imgSize));
+		if (resource != null) {
+			if (ResourceMediaType.FOLDER_TYPE.equals(resource.getResourceType())) {
+				this.setGraphic(Images.FOLDER_COLLAPSED.getImageView(imgSize, imgSize));
+			}
+			else {
+				this.setGraphic(Images.FILE_ICON.getImageView(imgSize, imgSize));
+			}
 		}
-		else {
-			this.setGraphic(Images.FILE_ICON.getImageView(imgSize, imgSize));
-			// if you want different icons for different file types this is
-			// where you'd do it
-		}
-		// set the value
 
 	}
 
@@ -76,7 +99,7 @@ public class RepoResourceTreeItem
 		this.addEventHandler(TreeItem.branchExpandedEvent(), e -> {
 			StaticBase.instance().getUiThread().runTask(() -> {
 				RepoResourceTreeItem source = RepoResourceTreeItem.class.cast(e.getTreeItem());
-				if (overrideType != null) {
+				if (ResourceMediaType.FOLDER_TYPE.equals(overrideType)) {
 					ImageView iv = (ImageView) source.getGraphic();
 					iv.setImage(Images.FOLDER_EXPANDED.getImage(imgSize, imgSize));
 				}

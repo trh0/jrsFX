@@ -1,6 +1,7 @@
 package de.quinscape.jrsfx.ui.components;
 
 import de.quinscape.jrsfx.util.ApplicationIO;
+import de.quinscape.jrsfx.util.Messages;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -20,9 +21,10 @@ public class CodeEditor
 
 	private final String editingTemplate;
 	private final VBox box;
+	private Mode mode;
 
 	private String applyEditingTemplate() {
-		return editingTemplate.replace("${code}", editingCode);
+		return editingTemplate.replace("${code}", editingCode).replace("${mode}", mode.mode());
 	}
 
 	public void setCode(String newCode) {
@@ -44,18 +46,48 @@ public class CodeEditor
 
 	}
 
+	public enum Mode {
+		C("text/x-csrc", "codemirror/clike_min.js"),
+		CPP("text/x-c++src", "codemirror/clike_min.js"),
+		KOTLIN("text/x-kotlin", "codemirror/clike_min.js"),
+		SCALA("text/scala", "codemirror/clike_min.js"),
+		JAVA("text/x-java", "codemirror/clike_min.js"),
+		XML("application/xml", "codemirror/xml.js"),
+		HTML("text/html", "codemirror/xml.js"),
+		SQL("text/x-sql", "codemirror/sql.js"),
+		CSS("text/css", "codemirror/css.js"),
+		JS("text/javascript", "codemirror/js.js"),
+		JSON("application/json", "codemirror/js.js"),
+		TYPESCRIPT("application/typescript", "codemirror/js.js");
+		private final String mode;
+		private final String jsSource;
+
+		private Mode(String s, String jsSource) {
+			this.mode = s;
+			this.jsSource = jsSource;
+		}
+
+		public String mode() {
+			return this.mode;
+		}
+
+		public String source() {
+			return this.jsSource;
+		}
+	}
+
 	/**
 	 * 
 	 * @param editingCode
 	 * @param title
 	 */
-	public CodeEditor(String editingCode, String title) {
+	public CodeEditor(String editingCode, String title, Mode mode) {
+		this.mode = (mode == null) ? Mode.XML : mode;
 		this.editingTemplate = getTemplate();
-		this.editingCode = editingCode;
+		this.editingCode = (this.mode == Mode.XML) ? Messages.formatXML(editingCode) : editingCode;
 		this.box = new VBox();
 		webview.getEngine().loadContent(applyEditingTemplate());
 		box.setPrefWidth(VBox.USE_COMPUTED_SIZE);
-		box.setPrefHeight(Integer.MAX_VALUE);
 		box.getChildren().add(webview);
 		VBox.setVgrow(webview, Priority.ALWAYS);
 		webview.prefWidthProperty().bind(box.widthProperty());
@@ -69,10 +101,10 @@ public class CodeEditor
 			return "<!doctype html>" + "<html>" + "<head>" + "  <style>" + ApplicationIO.fromClasspath(
 					"codemirror/codemirror_min.css") + "</style>" + "  <script>" + ApplicationIO.fromClasspath(
 							"codemirror/codemirror_min.js") + "</script>" + "  <script>" + ApplicationIO.fromClasspath(
-									"codemirror/clike_min.js") + "</script>" + "</head>" + "<body>"
-					+ "<form><textarea id=\"code\" name=\"code\">\n" + "${code}" + "</textarea></form>" + "<script>"
+									this.mode.source()) + "</script>" + "</head>" + "<body>"
+					+ "<textarea id=\"code\" name=\"code\">\n" + "${code}" + "</textarea>" + "<script>"
 					+ "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {"
-					+ "    lineNumbers: true," + "    matchBrackets: true," + "    mode: \"text/x-java\"" + "  });"
+					+ "    lineNumbers: true," + "    matchBrackets: true," + "    mode: \"${mode}\"" + "  });"
 					+ "</script>" + "</body>" + "</html>";
 		}
 		catch (Exception e) {
@@ -83,7 +115,7 @@ public class CodeEditor
 					+ "  <script src=\"http://codemirror.net/mode/clike/clike.js\"></script>" + "</head>" + "<body>"
 					+ "<form><textarea id=\"code\" name=\"code\">\n" + "${code}" + "</textarea></form>" + "<script>"
 					+ "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {"
-					+ "    lineNumbers: true," + "    matchBrackets: true," + "    mode: \"text/x-java\"" + "  });"
+					+ "    lineNumbers: true," + "    matchBrackets: true," + "    mode: \"${mode}\"" + "  });"
 					+ "</script>" + "</body>" + "</html>";
 		}
 	}

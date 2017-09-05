@@ -9,9 +9,13 @@ import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
+import de.quinscape.jrsfx.jasper.RepoTreeResource;
+import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.components.CodeEditor;
 import de.quinscape.jrsfx.ui.components.JasperUI;
+import de.quinscape.jrsfx.ui.components.RepoResourceTreeItem;
 import de.quinscape.jrsfx.util.ApplicationIO;
+import de.quinscape.jrsfx.util.Messages;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -34,6 +38,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
@@ -131,7 +136,6 @@ public class FXMLController_ViewBase
 	void connectJRS(ActionEvent event) {
 		SimpleDoubleProperty prop = new SimpleDoubleProperty();
 		progressBar.progressProperty().bind(prop);
-
 		progressBar.setStyle("-fx-accent: red;");
 		final Animation animation = new Transition() {
 			{
@@ -151,20 +155,25 @@ public class FXMLController_ViewBase
 		};
 
 		StaticBase.instance().getUiThread().runTask(() -> {
-			TreeItem<String> root = JasperUI.repositoryTreeItem(jrsClient.getResources(null, 0, 1500, null), prop);
+			RepoResourceTreeItem root = JasperUI.repositoryTreeItem(jrsClient.getResources(null, 0, 1500, null), prop);
 			Platform.runLater(() -> {
 				this.accTreeView.setRoot(root);
 				MultipleSelectionModel<TreeItem<String>> sm = accTreeView.getSelectionModel();
 				sm.selectedItemProperty().addListener((o, ov, nv) -> {
-					StaticBase.instance().getUiThread().runTask(() -> {
-						String uri = "";
-						TreeItem<String> chld = sm.getSelectedItem();
+					String uri = "";
+					RepoResourceTreeItem chld = (RepoResourceTreeItem) sm.getSelectedItem();
+					RepoTreeResource details = chld.getDetails();
+					if (details == null) {
 						while (chld != this.accTreeView.getRoot()) {
 							uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");
-							chld = chld.getParent();
+							chld = (RepoResourceTreeItem) chld.getParent();
 						}
-						this.handleSelectResource("/" + uri, nv.getValue());
-					});
+						uri = "/" + uri;
+					}
+					else {
+						uri = details.getUri();
+					}
+					this.handleSelectResource(uri, nv.getValue(), details);
 				});
 				this.accTitledPane.setText("JRS Repository");
 				progressBar.setStyle("-fx-accent:green;");
@@ -174,17 +183,33 @@ public class FXMLController_ViewBase
 
 	}
 
-	private void handleSelectResource(String uri, String value) {
-		StaticBase.instance().getDataThread().runTask(() -> {
-			String s = jrsClient.getResourceDetail(uri, true);
-			Platform.runLater(() -> {
-				CodeEditor ce = new CodeEditor(s, value);
-				ce.getPane().prefWidthProperty().bind(tabPane.widthProperty());
-				ce.getPane().prefHeightProperty().bind(tabPane.heightProperty());
-				this.tabPane.getTabs().add(ce);
+	private void handleSelectResource(String uri, String resourceName, RepoTreeResource details) {
+		this.sidebarVBox.getChildren().clear();
+		JFXButton viewDetailsButton = new JFXButton(Messages.appBundle().getString("button.viewdetails.label"));
+		viewDetailsButton.setOnAction((e) -> {
+			final StringBuilder s = new StringBuilder();
+			StaticBase.instance().getUiThread().runTask(() -> {
+				s.append(jrsClient.getResourceDetail(uri, true));
+				Platform.runLater(() -> {
+					CodeEditor ce = new CodeEditor(s.toString(), resourceName, null);
+					ce.getPane().prefWidthProperty().bind(tabPane.widthProperty());
+					ce.getPane().prefHeightProperty().bind(tabPane.heightProperty());
+					this.tabPane.getTabs().add(ce);
+				});
 			});
 		});
-		System.out.println(uri);
+		this.sidebarVBox.getChildren().add(viewDetailsButton);
+		if (details != null && details.getResourceType().equals(ResourceMediaType.REPORT_UNIT_TYPE)) {
+			JFXButton viewReport1 = new JFXButton(Messages.appBundle().getString("button.viewreport.raw.label"));
+			JFXButton viewReport2 = new JFXButton(Messages.appBundle().getString("button.viewreport.iframe.label"));
+			JFXButton viewReport3 = new JFXButton(Messages.appBundle().getString("button.viewreport.vizjs.label"));
+			this.sidebarVBox.getChildren().addAll(viewReport1, viewReport2, viewReport3);
+			viewReport1.setOnAction((e) -> {
+				Tab t = JasperUI.getReportRaw(jrsClient, uri, resourceName);
+				this.tabPane.getTabs().add(t);
+			});
+		}
+		this.sidebarVBox.getChildren().forEach(chld -> VBox.setVgrow(chld, Priority.ALWAYS));
 	}
 
 	@FXML
@@ -204,8 +229,9 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void initialize() {
-		jrsClient = new JasperReportsRestClient(null, StaticBase.instance().getConfig().getProperty("jrs.admin.user"),
-				StaticBase.instance().getConfig().getProperty("jrs.admin.pw"));
+		jrsClient = new JasperReportsRestClient(StaticBase.instance().getConfig().getProperty("jrs.admin.orga"),
+				StaticBase.instance().getConfig().getProperty("jrs.admin.user"), StaticBase.instance().getConfig()
+						.getProperty("jrs.admin.pw"));
 		progressBar.setStyle("");
 
 	}

@@ -3,6 +3,7 @@ package de.quinscape.jrsfx.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.PropertyResourceBundle;
@@ -10,6 +11,14 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
 
 import de.quinscape.jrsfx.data.Mapping;
 import javafx.scene.control.TreeItem;
@@ -172,5 +181,32 @@ public class Messages {
 			}
 		}
 		return res;
+	}
+
+	public static String formatXML(String xml) {
+		String formatted = null;
+		try {
+			final InputSource src = new InputSource(new StringReader(xml));
+			final Node document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src)
+					.getDocumentElement();
+			final Boolean keepDeclaration = Boolean.valueOf(xml.startsWith("<?xml"));
+
+			// May need this:
+			// System.setProperty(DOMImplementationRegistry.PROPERTY,"com.sun.org.apache.xerces.internal.dom.DOMImplementationSourceImpl");
+
+			final DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
+			final DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+			final LSSerializer writer = impl.createLSSerializer();
+
+			writer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
+			writer.getDomConfig().setParameter("xml-declaration", keepDeclaration);
+
+			formatted = writer.writeToString(document);
+		}
+		catch (Exception e) {
+			ApplicationIO.toErrorStream(e);
+		}
+		return formatted;
+
 	}
 }

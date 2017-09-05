@@ -1,4 +1,4 @@
-package de.quinscape.jrsfx.jasper.stock;
+package de.quinscape.jrsfx.jasper;
 
 public enum ResourceFilesMimeType {
 

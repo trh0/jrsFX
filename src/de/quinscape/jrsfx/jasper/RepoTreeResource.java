@@ -42,10 +42,6 @@ public class RepoTreeResource {
 		this.resourceType = null;
 	}
 
-	public static final String REPORT_UNIT = "reportUnit";
-	public static final String FILE = "file";
-	public static final String DASHBOARD = "dashboard";
-	public static final String FOLDER = "folder";
 	@XmlElement
 	@XmlJavaTypeAdapter(DateTimeAdapter.class)
 	private final DateTime creationDate;

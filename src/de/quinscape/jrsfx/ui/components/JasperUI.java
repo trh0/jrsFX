@@ -6,18 +6,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.quinscape.jrsfx.controller.StaticBase;
+import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
+import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.Images;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 
 public class JasperUI {
 	private JasperUI() {}
 
-	public static TreeItem<String> repositoryTreeItem(List<RepoTreeResource> resources, DoubleProperty progress) {
-		TreeItem<String> rootItem = new TreeItem<>(StaticBase.instance().getConfig().getProperty("jrs.url"), Images.HOST
-				.getImageView(16, 16));
+	public static RepoResourceTreeItem repositoryTreeItem(List<RepoTreeResource> resources, DoubleProperty progress) {
+		RepoResourceTreeItem rootItem = new RepoResourceTreeItem(StaticBase.instance().getConfig().getProperty(
+				"jrs.url"), Images.HOST.getImageView(16, 16));
 		Pattern pattern = Pattern.compile("\\/[^/\\s]+(?=\\/)");
 		double len = resources.size();
 		final AtomicInteger now = new AtomicInteger(1);
@@ -26,25 +32,25 @@ public class JasperUI {
 				String uri = r.getUri();
 				String group = null;
 				Matcher m = pattern.matcher(uri);
-				TreeItem<String> start = rootItem;
+				RepoResourceTreeItem start = rootItem;
 				while (m.find()) {
 					group = m.group().replaceAll("\\/", "");
-					TreeItem<String> match = null;
+					RepoResourceTreeItem match = null;
 					for (TreeItem<String> ch : start.getChildren()) {
 						if (ch.getValue().equals(group)) {
-							match = ch;
+							match = (RepoResourceTreeItem) ch;
 							break;
 						}
 					}
 					if (match == null) {
-						match = new TreeItem<>(group, Images.FOLDER_COLLAPSED.getImageView(16, 16));
+						match = new RepoResourceTreeItem(group, Images.FOLDER_COLLAPSED.getImageView(16, 16));
 						start.getChildren().add(match);
 					}
 					start = match;
 				}
-				if (!r.getResourceType().equals(RepoTreeResource.FOLDER)) {
-					start.getChildren().add(new TreeItem<>(uri.substring(uri.lastIndexOf('/') + 1), Images.FILE_ICON
-							.getImageView(16, 16)));
+				if (!r.getResourceType().equals(ResourceMediaType.FOLDER_TYPE)) {
+					start.getChildren().add(new RepoResourceTreeItem(uri.substring(uri.lastIndexOf('/') + 1), r,
+							Images.FILE_ICON.getImageView(16, 16)));
 				}
 				Platform.runLater(() -> progress.setValue(now.doubleValue() / len));
 				now.incrementAndGet();
@@ -52,4 +58,34 @@ public class JasperUI {
 
 		return rootItem;
 	}
+
+	public static Tab getReportIFrame(JasperReportsRestClient client, String uri, String title) {
+		Tab result = new Tab(title);
+		VBox box = new VBox();
+		WebView webView = new WebView();
+		box.getChildren().add(webView);
+		VBox.setVgrow(webView, Priority.ALWAYS);
+		result.setContent(box);
+
+		return result;
+
+	}
+
+	public static Tab getReportRaw(JasperReportsRestClient client, String uri, String title) {
+		Tab result = new Tab(title);
+		VBox box = new VBox();
+		WebView webView = new WebView();
+		box.setPrefWidth(VBox.USE_COMPUTED_SIZE);
+		StaticBase.instance().getUiThread().runTask(() -> {
+			String html = client.getReportHtml(uri, null);
+			Platform.runLater(() -> webView.getEngine().loadContent(html));
+		});
+		box.getChildren().add(webView);
+		VBox.setVgrow(webView, Priority.ALWAYS);
+		result.setContent(box);
+
+		return result;
+
+	}
+
 }

@@ -33,9 +33,11 @@ public class JasperReportsRestClient {
 	private final String orga;
 	private final String user;
 	private final String password;
-	private static final String SERVER_BASE_URL = StaticBase.instance().getConfig().getProperty("jrs.url");
+	public static final String SERVER_HOST = StaticBase.instance().getConfig().getProperty("jrs.host");
+	private static final String SERVER_BASE_URL = SERVER_HOST + "/" + StaticBase.instance().getConfig().getProperty(
+			"jrs.url");
 	private static final String REST_LOGIN = "rest/login";
-	private static final String REST_REPORTS = "rest_v2/reports/";
+	private static final String REST_REPORTS = "rest_v2/reports";
 	private static final String REST_RESOURCES = "rest_v2/resources";
 	private String sessionID = null;
 	private final OkHttpClient client;
@@ -107,7 +109,7 @@ public class JasperReportsRestClient {
 	 * @return
 	 */
 	public String getReportHtml(String resource, Map<String, String> params) {
-		String htmlReport = null;
+		String htmlReport = "";
 
 		if (!this.auth()) {
 			ApplicationIO.toErrorStream("Authentication failed.");
@@ -130,7 +132,24 @@ public class JasperReportsRestClient {
 
 		try {
 			res = client.newCall(req).execute();
-			htmlReport = res.body().string();
+			if (res.code() > 400) {
+				ApplicationIO.toErrorStream("Resource not found.", url);
+			}
+			else {
+				htmlReport = res.body().string();
+			//@formatter:off
+			htmlReport = "<!DOCTYPE html>${report}"
+						.replace("${report}", 
+							htmlReport
+							.replaceAll(
+									Pattern.quote("\"/jasperserver"), 
+									"\"" + JasperReportsRestClient.SERVER_HOST + "/jasperserver")
+							.replaceAll(Pattern.quote("\"baseUrl\":\"\""), 
+									"\"baseUrl\":\"" + JasperReportsRestClient.SERVER_HOST + "\"")
+						);
+			//@formatter:on
+			}
+			System.out.println(htmlReport);
 		}
 		catch (Exception e) {
 			ApplicationIO.toErrorStream(e);
@@ -220,6 +239,7 @@ public class JasperReportsRestClient {
 			try {
 				res = client.newCall(req).execute();
 				result = res.body().string();
+
 			}
 			catch (Exception e) {
 				ApplicationIO.toErrorStream(e);
