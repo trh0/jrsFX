@@ -11,16 +11,16 @@ public class StaticBase
 		implements IController {
 
 	private static StaticBase instance;
-	private final DataThread threadData;
+	private final DataThread dataThread;
 
 	public DataThread getDataThread() {
-		return this.threadData;
+		return this.dataThread;
 	}
 
-	private final UIThread threadUi;
+	private final UIThread uiThread;
 
 	public UIThread getUiThread() {
-		return this.threadUi;
+		return this.uiThread;
 	}
 
 	private UIController uiController;
@@ -36,8 +36,8 @@ public class StaticBase
 	}
 
 	private StaticBase() {
-		this.threadUi = new UIThread();
-		this.threadData = new DataThread();
+		this.uiThread = new UIThread();
+		this.dataThread = new DataThread();
 		this.bootup();
 	}
 
@@ -64,8 +64,8 @@ public class StaticBase
 
 	@Override
 	public void terminate() throws InterruptedException {
-		threadUi.terminate();
-		threadData.terminate();
+		uiThread.terminate();
+		dataThread.terminate();
 		uiController.terminate();
 		Platform.exit();
 	}

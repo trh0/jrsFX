@@ -8,7 +8,7 @@ import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTreeView;
 
 import de.quinscape.jrsfx.controller.StaticBase;
-import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
+import de.quinscape.jrsfx.jasper.JRSRestClient;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
 import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.components.CodeEditor;
@@ -51,7 +51,7 @@ public class FXMLController_ViewBase
 	private final String FXML_LOCATION = "fxml/ViewBase.fxml";
 	private final String STYLESHEET = "fxml/application.css";
 	public static final Byte IDX = 1;
-	private JasperReportsRestClient jrsClient;
+	private JRSRestClient jrsClient;
 
 	@Override
 	public String getFxmlLocation() {
@@ -134,53 +134,60 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void connectJRS(ActionEvent event) {
-		SimpleDoubleProperty prop = new SimpleDoubleProperty();
-		progressBar.progressProperty().bind(prop);
-		progressBar.setStyle("-fx-accent: red;");
-		final Animation animation = new Transition() {
-			{
-				setCycleDuration(Duration.millis(750));
-				setInterpolator(Interpolator.EASE_OUT);
-			}
-
-			@Override
-			protected void interpolate(double frac) {
-				progressBar.setStyle("-fx-accent: rgba( 0, 255, 0," + (1 - frac) + ")");
-				if (frac > 0.99) {
-					progressBar.progressProperty().unbind();
-					progressBar.setProgress(0);
-					this.stop();
+		if (this.accTreeView.getRoot() == null) {
+			SimpleDoubleProperty prop = new SimpleDoubleProperty();
+			progressBar.progressProperty().bind(prop);
+			progressBar.setStyle("-fx-accent: red;");
+			final Animation animation = new Transition() {
+				{
+					setCycleDuration(Duration.millis(750));
+					setInterpolator(Interpolator.EASE_OUT);
 				}
-			}
-		};
 
-		StaticBase.instance().getUiThread().runTask(() -> {
-			RepoResourceTreeItem root = JasperUI.repositoryTreeItem(jrsClient.getResources(null, 0, 1500, null), prop);
-			Platform.runLater(() -> {
-				this.accTreeView.setRoot(root);
-				MultipleSelectionModel<TreeItem<String>> sm = accTreeView.getSelectionModel();
-				sm.selectedItemProperty().addListener((o, ov, nv) -> {
-					String uri = "";
-					RepoResourceTreeItem chld = (RepoResourceTreeItem) sm.getSelectedItem();
-					RepoTreeResource details = chld.getDetails();
-					if (details == null) {
-						while (chld != this.accTreeView.getRoot()) {
-							uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");
-							chld = (RepoResourceTreeItem) chld.getParent();
+				@Override
+				protected void interpolate(double frac) {
+					progressBar.setStyle("-fx-accent: rgba( 0, 255, 0," + (1 - frac) + ")");
+					if (frac > 0.99) {
+						progressBar.progressProperty().unbind();
+						progressBar.setProgress(0);
+						this.stop();
+					}
+				}
+			};
+
+			StaticBase.instance().getUiThread().runTask(() -> {
+				RepoResourceTreeItem root = JasperUI.repositoryTreeItem(jrsClient.getResources(null, 0, 1500, null),
+						prop);
+				Platform.runLater(() -> {
+					this.accTreeView.setRoot(root);
+					MultipleSelectionModel<TreeItem<String>> sm = accTreeView.getSelectionModel();
+					sm.selectedItemProperty().addListener((o, ov, nv) -> {
+						String uri = "";
+						RepoResourceTreeItem chld = (RepoResourceTreeItem) sm.getSelectedItem();
+						RepoTreeResource details = chld.getDetails();
+						if (details == null) {
+							while (chld != this.accTreeView.getRoot()) {
+								uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");
+								chld = (RepoResourceTreeItem) chld.getParent();
+							}
+							uri = "/" + uri;
 						}
-						uri = "/" + uri;
-					}
-					else {
-						uri = details.getUri();
-					}
-					this.handleSelectResource(uri, nv.getValue(), details);
+						else {
+							uri = details.getUri();
+						}
+						this.handleSelectResource(uri, nv.getValue(), details);
+					});
+					this.accTitledPane.setText("JRS Repository");
+					progressBar.setStyle("-fx-accent:green;");
+					animation.play();
 				});
-				this.accTitledPane.setText("JRS Repository");
-				progressBar.setStyle("-fx-accent:green;");
-				animation.play();
 			});
-		});
-
+		}
+		else {
+			StaticBase.instance().getDataThread().scheduleTask(() -> {
+				Platform.runLater(() -> this.accTreeView.setRoot(null));
+			}, 1000);
+		}
 	}
 
 	private void handleSelectResource(String uri, String resourceName, RepoTreeResource details) {
@@ -229,7 +236,7 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void initialize() {
-		jrsClient = new JasperReportsRestClient(StaticBase.instance().getConfig().getProperty("jrs.admin.orga"),
+		jrsClient = new JRSRestClient(StaticBase.instance().getConfig().getProperty("jrs.admin.orga"),
 				StaticBase.instance().getConfig().getProperty("jrs.admin.user"), StaticBase.instance().getConfig()
 						.getProperty("jrs.admin.pw"));
 		progressBar.setStyle("");

@@ -3,7 +3,6 @@ package de.quinscape.jrsfx.controller;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.quinscape.jrsfx.worker.Callback;
 import de.quinscape.jrsfx.worker.CallbackTask;
 
 /**
@@ -44,16 +43,11 @@ public class UIThread
 	String veryImportantUiData = "";
 
 	protected void example() {
-		this.<String> runTask(new CallbackTask<String>(new Callback<String>() {
-
-			@Override
-			public void callback(CallbackTask<String> callbackTask) {
-				veryImportantUiData = callbackTask.getData().getValue();
-				javafx.application.Platform.runLater(() -> {
-					// update();
-				});
-
-			}
+		this.<String> runTask(new CallbackTask<String>(callbackTask -> {
+			veryImportantUiData = callbackTask.getData().getValue();
+			javafx.application.Platform.runLater(() -> {
+				// update();
+			});
 
 		}) {
 

@@ -20,9 +20,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class JasperReportsRestClient {
+public class JRSRestClient {
 
-	public JasperReportsRestClient(String orga, String username, String password) {
+	public JRSRestClient(String orga, String username, String password) {
 		this.orga = orga;
 		this.user = username;
 		this.password = password;
@@ -77,7 +77,7 @@ public class JasperReportsRestClient {
 				}
 			}
 			else {
-				ApplicationIO.toErrorStream("WARNING: ", res.code());
+				ApplicationIO.toErrorStream("WARNING", res.code());
 			}
 		}
 		catch (IOException | IllegalStateException e) {
@@ -143,13 +143,12 @@ public class JasperReportsRestClient {
 							htmlReport
 							.replaceAll(
 									Pattern.quote("\"/jasperserver"), 
-									"\"" + JasperReportsRestClient.SERVER_HOST + "/jasperserver")
+									"\"" + JRSRestClient.SERVER_HOST + "/jasperserver")
 							.replaceAll(Pattern.quote("\"baseUrl\":\"\""), 
-									"\"baseUrl\":\"" + JasperReportsRestClient.SERVER_HOST + "\"")
+									"\"baseUrl\":\"" + JRSRestClient.SERVER_HOST + "\"")
 						);
 			//@formatter:on
 			}
-			System.out.println(htmlReport);
 		}
 		catch (Exception e) {
 			ApplicationIO.toErrorStream(e);

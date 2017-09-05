@@ -101,7 +101,7 @@ public class UIController
 			primaryStage.show();
 		}
 		catch (Exception e) {
-			ApplicationIO.toErrorStream(e, "on loading baseView");
+			ApplicationIO.toErrorStream(e, "while loading baseView");
 		}
 	}
 

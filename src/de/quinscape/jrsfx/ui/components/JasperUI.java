@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.quinscape.jrsfx.controller.StaticBase;
-import de.quinscape.jrsfx.jasper.JasperReportsRestClient;
+import de.quinscape.jrsfx.jasper.JRSRestClient;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
 import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.Images;
@@ -59,7 +59,7 @@ public class JasperUI {
 		return rootItem;
 	}
 
-	public static Tab getReportIFrame(JasperReportsRestClient client, String uri, String title) {
+	public static Tab getReportIFrame(JRSRestClient client, String uri, String title) {
 		Tab result = new Tab(title);
 		VBox box = new VBox();
 		WebView webView = new WebView();
@@ -71,7 +71,7 @@ public class JasperUI {
 
 	}
 
-	public static Tab getReportRaw(JasperReportsRestClient client, String uri, String title) {
+	public static Tab getReportRaw(JRSRestClient client, String uri, String title) {
 		Tab result = new Tab(title);
 		VBox box = new VBox();
 		WebView webView = new WebView();
