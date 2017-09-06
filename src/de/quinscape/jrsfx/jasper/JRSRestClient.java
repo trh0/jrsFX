@@ -34,7 +34,7 @@ public class JRSRestClient {
 	private final String user;
 	private final String password;
 	public static final String SERVER_HOST = StaticBase.instance().getConfig().getProperty("jrs.host");
-	private static final String SERVER_BASE_URL = SERVER_HOST + "/" + StaticBase.instance().getConfig().getProperty(
+	public static final String SERVER_BASE_URL = SERVER_HOST + "/" + StaticBase.instance().getConfig().getProperty(
 			"jrs.url");
 	private static final String REST_LOGIN = "rest/login";
 	private static final String REST_REPORTS = "rest_v2/reports";
@@ -43,8 +43,7 @@ public class JRSRestClient {
 	private final OkHttpClient client;
 
 	/**
-	 * 
-	 * @return
+	 * @return <code>true</<code> if successful.
 	 */
 	public boolean auth() {
 		boolean success = false;

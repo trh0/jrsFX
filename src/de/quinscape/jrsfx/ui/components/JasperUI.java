@@ -10,6 +10,7 @@ import de.quinscape.jrsfx.jasper.JRSRestClient;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
 import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.Images;
+import de.quinscape.jrsfx.util.ApplicationIO;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.Tab;
@@ -86,6 +87,47 @@ public class JasperUI {
 
 		return result;
 
+	}
+
+	public static Tab getReportVisualizeJS(String uri, String title) {
+		Tab result = new Tab(title);
+		VBox box = new VBox();
+		WebView webView = new WebView();
+		box.setPrefWidth(VBox.USE_COMPUTED_SIZE);
+		StaticBase sb = StaticBase.instance();
+		sb.getUiThread().runTask(() -> {
+			String sbHtml = null;
+			String script = null;
+			try {
+				script = ApplicationIO.fromClasspath("visualize/visualizeReport.js");
+				sbHtml = ApplicationIO.fromClasspath("visualize/visualize.html");
+			}
+			catch (Exception e) {
+				ApplicationIO.toErrorStream(e);
+			}
+
+			script = script.replaceAll(Pattern.quote("${jrs}"), JRSRestClient.SERVER_BASE_URL);
+
+			String jrsUser = sb.getConfig().getProperty("jrs.admin.user");
+			String jrsPw = sb.getConfig().getProperty("jrs.admin.pw");
+			String jrsOrga = sb.getConfig().getProperty("jrs.admin.orga");
+			jrsOrga = (jrsOrga != null) ? ",orga :\"" + jrsOrga + "\"" : "";
+
+			script = script.replaceAll(Pattern.quote("${name}"), jrsUser);
+			script = script.replaceAll(Pattern.quote("${pass}"), jrsPw);
+			script = script.replaceAll(Pattern.quote("${orga}"), jrsOrga);
+			script = script.replaceAll(Pattern.quote("${uri}"), uri);
+
+			final String html = sbHtml.replace("${jrs}", JRSRestClient.SERVER_BASE_URL).replace("${script}", script);
+			System.out.println(html);
+			Platform.runLater(() -> webView.getEngine().loadContent(html));
+
+		});
+		box.getChildren().add(webView);
+		VBox.setVgrow(webView, Priority.ALWAYS);
+		result.setContent(box);
+
+		return result;
 	}
 
 }

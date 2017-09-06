@@ -8,7 +8,7 @@ import java.util.Properties;
 public class Configuration
 		extends Properties {
 	private static final long serialVersionUID = -654941593246990751L;
-	public static final String DEFAULT_CFG = "config/default.properties";
+	public static final String DEFAULT_CFG = "config/cfg.properties";
 	public static final String XML = "xml";
 
 	/**

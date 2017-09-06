@@ -215,6 +215,14 @@ public class FXMLController_ViewBase
 				Tab t = JasperUI.getReportRaw(jrsClient, uri, resourceName);
 				this.tabPane.getTabs().add(t);
 			});
+			viewReport3.setOnAction((e) -> {
+				Tab t = new Tab("NOT IMPLEMENTED YET");
+				this.tabPane.getTabs().add(t);
+			});
+			viewReport3.setOnAction((e) -> {
+				Tab t = JasperUI.getReportVisualizeJS(uri, resourceName);
+				this.tabPane.getTabs().add(t);
+			});
 		}
 		this.sidebarVBox.getChildren().forEach(chld -> VBox.setVgrow(chld, Priority.ALWAYS));
 	}
@@ -236,9 +244,9 @@ public class FXMLController_ViewBase
 
 	@FXML
 	void initialize() {
-		jrsClient = new JRSRestClient(StaticBase.instance().getConfig().getProperty("jrs.admin.orga"),
-				StaticBase.instance().getConfig().getProperty("jrs.admin.user"), StaticBase.instance().getConfig()
-						.getProperty("jrs.admin.pw"));
+		jrsClient = new JRSRestClient(StaticBase.instance().getConfig().getProperty("jrs.admin.orga"), StaticBase
+				.instance().getConfig().getProperty("jrs.admin.user"), StaticBase.instance().getConfig().getProperty(
+						"jrs.admin.pw"));
 		progressBar.setStyle("");
 
 	}
