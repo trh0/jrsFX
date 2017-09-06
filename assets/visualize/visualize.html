@@ -3,12 +3,16 @@
 <head>
 <meta charset="UTF-8">
 </head>
-<script src="${jrs}client/visualize.js"></script>
+<script src="${jrs}client/visualize.js?logEnabled=true&logLevel=debug&_opt=false"></script>
 <body>
 <div id="statusContainer"></div><br>
 <div id="reportContainer"></div>
 </body>
 <script type="text/javascript">
+console.log = function(o){
+	var container = document.getElementById("statusContainer");
+	container.innerHTML = container.innerHTML.trim() + "<br>" + o;
+};
 ${script}
 </script>
 </html>

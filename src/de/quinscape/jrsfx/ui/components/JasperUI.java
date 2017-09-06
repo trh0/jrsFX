@@ -24,7 +24,7 @@ public class JasperUI {
 
 	public static RepoResourceTreeItem repositoryTreeItem(List<RepoTreeResource> resources, DoubleProperty progress) {
 		RepoResourceTreeItem rootItem = new RepoResourceTreeItem(StaticBase.instance().getConfig().getProperty(
-				"jrs.url"), Images.HOST.getImageView(16, 16));
+				"jrs.url"), Images.FOLDER_COLLAPSED.getImageView(16, 16));
 		Pattern pattern = Pattern.compile("\\/[^/\\s]+(?=\\/)");
 		double len = resources.size();
 		final AtomicInteger now = new AtomicInteger(1);
@@ -106,12 +106,13 @@ public class JasperUI {
 				ApplicationIO.toErrorStream(e);
 			}
 
-			script = script.replaceAll(Pattern.quote("${jrs}"), JRSRestClient.SERVER_BASE_URL);
+			script = script.replaceAll(Pattern.quote("${jrs}"), JRSRestClient.SERVER_BASE_URL.substring(0,
+					JRSRestClient.SERVER_BASE_URL.length() - 1));
 
 			String jrsUser = sb.getConfig().getProperty("jrs.admin.user");
 			String jrsPw = sb.getConfig().getProperty("jrs.admin.pw");
 			String jrsOrga = sb.getConfig().getProperty("jrs.admin.orga");
-			jrsOrga = (jrsOrga != null) ? ",orga :\"" + jrsOrga + "\"" : "";
+			jrsOrga = (jrsOrga != null) ? ",organization:\"" + jrsOrga + "\"" : "";
 
 			script = script.replaceAll(Pattern.quote("${name}"), jrsUser);
 			script = script.replaceAll(Pattern.quote("${pass}"), jrsPw);
@@ -119,8 +120,12 @@ public class JasperUI {
 			script = script.replaceAll(Pattern.quote("${uri}"), uri);
 
 			final String html = sbHtml.replace("${jrs}", JRSRestClient.SERVER_BASE_URL).replace("${script}", script);
-			System.out.println(html);
-			Platform.runLater(() -> webView.getEngine().loadContent(html));
+
+			StaticBase.instance().serveContent(html);
+
+			Platform.runLater(() -> {
+				webView.getEngine().load("http://localhost:80/");
+			});
 
 		});
 		box.getChildren().add(webView);

@@ -164,7 +164,7 @@ public class FXMLController_ViewBase
 					sm.selectedItemProperty().addListener((o, ov, nv) -> {
 						String uri = "";
 						RepoResourceTreeItem chld = (RepoResourceTreeItem) sm.getSelectedItem();
-						RepoTreeResource details = chld.getDetails();
+						RepoTreeResource details = (chld != null) ? chld.getDetails() : null;
 						if (details == null) {
 							while (chld != this.accTreeView.getRoot()) {
 								uri = chld.getValue() + (uri != null && !uri.isEmpty() ? "/" + uri : "");

@@ -4,6 +4,7 @@ import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
 import de.quinscape.jrsfx.jasper.ResourceMediaType;
 import de.quinscape.jrsfx.ui.Images;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 
@@ -19,14 +20,12 @@ public class RepoResourceTreeItem
 	// TODO Change to suit the applications needs!
 	// this stores the full path to the file or directory
 	private final RepoTreeResource details;
-	public static final Number imgSize = 8;
+	public static final Number imgSize = 16;
 	private final String overrideType;
 
 	public RepoTreeResource getDetails() {
 		return this.details;
 	}
-
-	private boolean wasExpanded = false;
 
 	public RepoResourceTreeItem(String value, RepoTreeResource resource, String overrideType) {
 		super(value);
@@ -46,7 +45,15 @@ public class RepoResourceTreeItem
 
 	public RepoResourceTreeItem(String value, javafx.scene.Node graphic) {
 		super(value, graphic);
-		this.overrideType = ResourceMediaType.FOLDER_TYPE;
+		this.overrideType = null;
+		this.details = null;
+		init(null, overrideType);
+		addHandlers();
+	}
+
+	public RepoResourceTreeItem(String value, javafx.scene.Node graphic, String overrideType) {
+		super(value, graphic);
+		this.overrideType = overrideType;
 		this.details = null;
 		init(null, overrideType);
 		addHandlers();
@@ -99,9 +106,10 @@ public class RepoResourceTreeItem
 		this.addEventHandler(TreeItem.branchExpandedEvent(), e -> {
 			StaticBase.instance().getUiThread().runTask(() -> {
 				RepoResourceTreeItem source = RepoResourceTreeItem.class.cast(e.getTreeItem());
-				if (ResourceMediaType.FOLDER_TYPE.equals(overrideType)) {
+				if (ResourceMediaType.FOLDER_TYPE.equals(overrideType) || (overrideType == null && details == null)) {
 					ImageView iv = (ImageView) source.getGraphic();
 					iv.setImage(Images.FOLDER_EXPANDED.getImage(imgSize, imgSize));
+					Platform.runLater(() -> source.setGraphic(iv));
 				}
 
 			});
@@ -110,9 +118,10 @@ public class RepoResourceTreeItem
 		this.addEventHandler(TreeItem.branchCollapsedEvent(), e -> {
 			StaticBase.instance().getUiThread().runTask(() -> {
 				RepoResourceTreeItem source = RepoResourceTreeItem.class.cast(e.getTreeItem());
-				if (true) {
+				if (ResourceMediaType.FOLDER_TYPE.equals(overrideType) || (overrideType == null && details == null)) {
 					ImageView iv = (ImageView) source.getGraphic();
 					iv.setImage(Images.FOLDER_COLLAPSED.getImage(imgSize, imgSize));
+					Platform.runLater(() -> source.setGraphic(iv));
 				}
 			});
 		});
