@@ -58,7 +58,8 @@ public class CodeEditor
 		CSS("text/css", "codemirror/css.js"),
 		JS("text/javascript", "codemirror/js.js"),
 		JSON("application/json", "codemirror/js.js"),
-		TYPESCRIPT("application/typescript", "codemirror/js.js");
+		TYPESCRIPT("application/typescript", "codemirror/js.js"),
+		RAW("text/plain", "codemirror/clike_min.js");
 		private final String mode;
 		private final String jsSource;
 

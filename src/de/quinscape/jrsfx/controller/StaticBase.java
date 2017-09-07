@@ -39,9 +39,9 @@ public class StaticBase
 		return this.uiController;
 	}
 
-	private Configuration config;
+	private volatile Configuration config;
 
-	public Configuration getConfig() {
+	public synchronized Configuration getConfig() {
 		return this.config;
 	}
 
@@ -64,6 +64,12 @@ public class StaticBase
 			}
 		}
 		return instance;
+	}
+
+	public void reloadConfiguration(Configuration c) {
+		synchronized (this.config) {
+			this.config = c;
+		}
 	}
 
 	@Override

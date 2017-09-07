@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.quinscape.jrsfx.config.Configuration;
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.jasper.JRSRestClient;
 import de.quinscape.jrsfx.jasper.RepoTreeResource;
@@ -15,6 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
@@ -23,6 +25,8 @@ public class JasperUI {
 	private JasperUI() {}
 
 	public static RepoResourceTreeItem repositoryTreeItem(List<RepoTreeResource> resources, DoubleProperty progress) {
+
+		final ImageView fileImg = Images.FILE_ICON.getImageView(16, 16);
 		RepoResourceTreeItem rootItem = new RepoResourceTreeItem(StaticBase.instance().getConfig().getProperty(
 				"jrs.url"), Images.FOLDER_COLLAPSED.getImageView(16, 16));
 		Pattern pattern = Pattern.compile("\\/[^/\\s]+(?=\\/)");
@@ -51,7 +55,7 @@ public class JasperUI {
 				}
 				if (!r.getResourceType().equals(ResourceMediaType.FOLDER_TYPE)) {
 					start.getChildren().add(new RepoResourceTreeItem(uri.substring(uri.lastIndexOf('/') + 1), r,
-							Images.FILE_ICON.getImageView(16, 16)));
+							fileImg));
 				}
 				Platform.runLater(() -> progress.setValue(now.doubleValue() / len));
 				now.incrementAndGet();
@@ -60,12 +64,26 @@ public class JasperUI {
 		return rootItem;
 	}
 
-	public static Tab getReportIFrame(JRSRestClient client, String uri, String title) {
+	public static Tab getReportIFrame(String uri, String title) {
 		Tab result = new Tab(title);
 		VBox box = new VBox();
 		WebView webView = new WebView();
 		box.getChildren().add(webView);
 		VBox.setVgrow(webView, Priority.ALWAYS);
+
+		try {
+			Configuration cfg = StaticBase.instance().getConfig();
+			String html = ApplicationIO.fromClasspath("visualize/iframe.html");
+			String tar = JRSRestClient.SERVER_BASE_URL + "flow.html?_flowId=viewReportFlow&reportUnit=" + uri
+					.replaceAll(Pattern.quote("/"), "%2F") + "&j_username=" + cfg.getProperty("jrs.admin.user")
+					+ "&j_password=" + cfg.getProperty("jrs.admin.pw") + "&decorate=no";
+			html = html.replaceAll(Pattern.quote("${iframe}"), tar);
+			webView.getEngine().loadContent(html);
+		}
+		catch (Exception e) {
+			ApplicationIO.toErrorStream(e);
+		}
+		box.setPrefWidth(1080);
 		result.setContent(box);
 
 		return result;

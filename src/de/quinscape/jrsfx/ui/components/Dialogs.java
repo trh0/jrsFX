@@ -8,6 +8,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
+
+import de.quinscape.jrsfx.config.Configuration;
+import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.ui.Images;
 import de.quinscape.jrsfx.util.ApplicationIO;
 import de.quinscape.jrsfx.util.Messages;
@@ -17,8 +22,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -61,8 +68,7 @@ public class Dialogs {
 	public static Dialog<File> openFileDialog(String fromPath) {
 		Dialog<File> dialog = new Dialog<>();
 		dialog.setResizable(true);
-		VBox b = filePathBrowser(dialog, fromPath);
-		dialog.getDialogPane().setContent(b);
+		dialog.getDialogPane().setContent(filePathBrowser(dialog, fromPath));
 		dialog.getDialogPane().getButtonTypes().addAll(TypeOk, TypeCancel);
 
 		return dialog;
@@ -140,6 +146,69 @@ public class Dialogs {
 		v.getChildren().add(treeView);
 		VBox.setVgrow(treeView, Priority.ALWAYS);
 		return v;
+	}
+
+	public static Dialog<ButtonType> getOpenJRSDialog() {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setResizable(true);
+		dialog.getDialogPane().setContent(getJRSBox(dialog));
+		dialog.getDialogPane().getButtonTypes().addAll(TypeOk, TypeCancel);
+
+		return dialog;
+	}
+
+	private static GridPane getJRSBox(Dialog<ButtonType> dialog) {
+		Configuration cfg = StaticBase.instance().getConfig();
+		GridPane gridPane = new GridPane();
+		gridPane.setPadding(new Insets(20));
+		gridPane.setHgap(25);
+		gridPane.setVgap(15);
+
+		Label l1 = new Label("JRS Host");
+		Label l2 = new Label("JRS URL");
+		Label l3 = new Label("JRS User");
+		Label l4 = new Label("JRS Orga");
+		Label l5 = new Label("JRS Password");
+		JFXTextField hostField = new JFXTextField(cfg.getProperty("jrs.host"));
+		JFXTextField urlField = new JFXTextField(cfg.getProperty("jrs.url"));
+		JFXTextField usrField = new JFXTextField(cfg.getProperty("jrs.admin.user"));
+		JFXTextField orgafield = new JFXTextField(cfg.getProperty("jrs.admin.orga"));
+		JFXPasswordField pwField = new JFXPasswordField();
+
+		gridPane.add(l1, 0, 0);
+		gridPane.add(hostField, 1, 0);
+		gridPane.add(l2, 0, 1);
+		gridPane.add(urlField, 1, 1);
+		gridPane.add(l3, 0, 2);
+		gridPane.add(usrField, 1, 2);
+		gridPane.add(l4, 0, 3);
+		gridPane.add(orgafield, 1, 3);
+		gridPane.add(l5, 0, 4);
+		gridPane.add(pwField, 1, 4);
+
+		dialog.setResultConverter(buttonType -> {
+			if (buttonType == TypeOk) {
+				cfg.setProperty("jrs.host", hostField.getText());
+				cfg.setProperty("jrs.url", urlField.getText());
+				cfg.setProperty("jrs.admin.user", usrField.getText());
+				String orga = orgafield.getText();
+				if (orga.isEmpty()) {
+					cfg.remove("jrs.admin.orga");
+				}
+				else {
+					cfg.setProperty("jrs.admin.orga", orga);
+				}
+				StaticBase.instance().reloadConfiguration(cfg);
+				String pw = pwField.getText();
+				if (pw != null && !pw.isEmpty())
+					cfg.setProperty("", pwField.getText());
+				return TypeOk;
+			}
+			else
+				return TypeCancel;
+		});
+
+		return gridPane;
 	}
 
 }

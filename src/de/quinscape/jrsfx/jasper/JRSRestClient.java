@@ -1,6 +1,8 @@
 package de.quinscape.jrsfx.jasper;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +10,14 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBContext;
 
 import de.quinscape.jrsfx.controller.StaticBase;
 import de.quinscape.jrsfx.util.ApplicationIO;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -23,11 +28,10 @@ import okhttp3.Response;
 public class JRSRestClient {
 
 	public JRSRestClient(String orga, String username, String password) {
-		this.orga = orga;
+		this.orga = (orga != null && !orga.trim().isEmpty()) ? orga : null;
 		this.user = username;
 		this.password = password;
 		this.client = new OkHttpClient();// .newBuilder().cookieJar(null).build();
-											// To add cookies on init.
 	}
 
 	private final String orga;
@@ -47,7 +51,6 @@ public class JRSRestClient {
 	 */
 	public boolean auth() {
 		boolean success = false;
-
 		String params = "j_username=" + this.user + (this.orga != null ? "|" + this.orga : "") + "&j_password="
 				+ this.password;
 
@@ -77,6 +80,7 @@ public class JRSRestClient {
 			}
 			else {
 				ApplicationIO.toErrorStream("WARNING", res.code());
+
 			}
 		}
 		catch (IOException | IllegalStateException e) {
@@ -221,6 +225,31 @@ public class JRSRestClient {
 		}
 
 		return data;
+	}
+
+	public Image getResourceImage(String uri, boolean viewNested) {
+		Image result = null;
+		if (!this.auth()) {
+			ApplicationIO.toErrorStream(this.getClass().getName(), "[viewResourceDetail]", "params:", uri,
+					"Login failed.");
+		}
+		else {
+			String url = SERVER_BASE_URL + REST_RESOURCES + (uri.startsWith("/") ? uri : "/" + uri) + ("?expanded="
+					+ viewNested);
+			Request req = new Request.Builder().url(url).headers(getHeaders()).get().build();
+			Response res = null;
+			try {
+				res = client.newCall(req).execute();
+				InputStream in = new ByteArrayInputStream(res.body().bytes());
+				result = SwingFXUtils.toFXImage(ImageIO.read(in), null);
+				in.close();
+
+			}
+			catch (Exception e) {
+				ApplicationIO.toErrorStream(e);
+			}
+		}
+		return result;
 	}
 
 	public String getResourceDetail(String uri, boolean viewNested) {

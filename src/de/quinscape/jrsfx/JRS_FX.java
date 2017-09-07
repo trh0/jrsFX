@@ -11,6 +11,7 @@ public class JRS_FX
 	public void start(Stage primaryStage) {
 		try {
 			StaticBase.instance().initUI(primaryStage);
+			System.out.println(System.getProperty("java.io.tmpdir"));
 		}
 		catch (Exception e) {
 			ApplicationIO.toErrorStream(e, "MAIN");
